@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controllers\Pengajar\DashboardController as PengajarDashboardController;
+use App\Http\Controllers\Pengajar\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
-use App\Http\Controllers\Pengajar\DashboardController as PengajarDashboardController;
 use App\Http\Controllers\Siswa\ProgressController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
@@ -95,13 +96,25 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/courses/{id}/edit', [PengajarDashboardController::class, 'editCourse'])->name('courses.edit');
         Route::post('/courses/{id}', [PengajarDashboardController::class, 'updateCourse'])->name('courses.update');
         Route::delete('/courses/{id}', [PengajarDashboardController::class, 'deleteCourse'])->name('courses.delete');
+        // ... route pengajar lainnya ...
+
+        Route::get('/courses/{id}/materials', [PengajarDashboardController::class, 'manageMaterials'])->name('courses.materials');
+        Route::post('/courses/{id}/materials', [PengajarDashboardController::class, 'storeMaterial'])->name('courses.materials.store');
+
+        // === TAMBAHKAN INI (Route Hapus Material) ===
+        Route::delete('/materials/{id}', [PengajarDashboardController::class, 'deleteMaterial'])->name('materials.delete');
 
         // Students
         Route::get('/students', [PengajarDashboardController::class, 'students'])->name('students');
 
         // Profile
+
         Route::get('/profile', [PengajarDashboardController::class, 'profile'])->name('profile');
-        Route::post('/profile', [PengajarDashboardController::class, 'updateProfile'])->name('profile.update');
+
+        Route::put('/profile', [PengajarDashboardController::class, 'updateProfile'])->name('profile.update');
+
+        Route::get('/courses/{id}/materials', [PengajarDashboardController::class, 'manageMaterials'])->name('courses.materials');
+        Route::post('/courses/{id}/materials', [PengajarDashboardController::class, 'storeMaterial'])->name('courses.materials.store');
     });
 
     // ==================== LOGOUT ROUTE ====================

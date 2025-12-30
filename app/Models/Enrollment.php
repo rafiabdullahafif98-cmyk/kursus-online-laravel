@@ -11,9 +11,12 @@ class Enrollment extends Model
     use HasFactory;
 
     protected $fillable = ['user_id', 'course_id', 'status', 'enrolled_at'];
+
     protected $casts = [
         'enrolled_at' => 'datetime',
     ];
+
+    // --- TARUH DI SINI (Line 18 ke bawah) ---
 
     public function user(): BelongsTo
     {

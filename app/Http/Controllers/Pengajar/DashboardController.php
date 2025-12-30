@@ -19,43 +19,45 @@ class DashboardController extends Controller
     public function index()
     {
         $user = auth()->user();
-    
-    // Statistik (PAKAI QUERY LANGSUNG, bukan method dari User)
-    $totalCourses = $user->taughtCourses()->count();
-    $publishedCourses = $user->taughtCourses()->where('is_published', true)->count();
-    $draftCourses = $user->taughtCourses()->where('is_published', false)->count();
-    
-    // Total siswa (query langsung)
-    $totalStudents = \App\Models\Enrollment::whereIn('course_id', 
-        $user->taughtCourses()->pluck('id')
-    )->distinct('user_id')->count('user_id');
 
-    // Kursus terbaru
-    $recentCourses = $user->taughtCourses()
-        ->with('category:id,name')
-        ->latest()
-        ->take(5)
-        ->get();
+        // Statistik (PAKAI QUERY LANGSUNG, bukan method dari User)
+        $totalCourses = $user->taughtCourses()->count();
+        $publishedCourses = $user->taughtCourses()->where('is_published', true)->count();
+        $draftCourses = $user->taughtCourses()->where('is_published', false)->count();
 
-    // Siswa baru (query langsung)
-    $recentStudents = \App\Models\Enrollment::whereIn('course_id', 
-        $user->taughtCourses()->pluck('id')
-    )
-    ->where('created_at', '>=', now()->subDays(30))
-    ->with('user:id,name,email')
-    ->distinct('user_id')
-    ->latest()
-    ->take(5)
-    ->get();
+        // Total siswa (query langsung)
+        $totalStudents = \App\Models\Enrollment::whereIn(
+            'course_id',
+            $user->taughtCourses()->pluck('id')
+        )->distinct('user_id')->count('user_id');
 
-    return view('pengajar.dashboard', compact(
-        'totalCourses',
-        'publishedCourses',
-        'draftCourses',
-        'totalStudents',
-        'recentCourses',
-        'recentStudents'
-    ));
+        // Kursus terbaru
+        $recentCourses = $user->taughtCourses()
+            ->with('category:id,name')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // Siswa baru (query langsung)
+        $recentStudents = \App\Models\Enrollment::whereIn(
+            'course_id',
+            $user->taughtCourses()->pluck('id')
+        )
+            ->where('created_at', '>=', now()->subDays(30))
+            ->with('user:id,name,email')
+            ->distinct('user_id')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        return view('pengajar.dashboard', compact(
+            'totalCourses',
+            'publishedCourses',
+            'draftCourses',
+            'totalStudents',
+            'recentCourses',
+            'recentStudents'
+        ));
     }
 
     public function courses()
@@ -116,7 +118,7 @@ class DashboardController extends Controller
     {
         $course = Course::where('user_id', Auth::id())->findOrFail($id);
         $categories = \App\Models\Category::all();
-        
+
         return view('pengajar.course-edit', compact('course', 'categories'));
     }
 
@@ -168,21 +170,15 @@ class DashboardController extends Controller
 
     public function students()
     {
-        $user = Auth::user();
-        
-        // Ambil semua siswa yang enroll ke kursus pengajar ini
-        $students = Enrollment::whereIn('course_id', 
-            $user->taughtCourses()->pluck('id')
-        )
-        ->with(['user:id,name,email', 'course:id,title'])
-        ->select('user_id', 'course_id', 'status', 'enrolled_at')
-        ->distinct('user_id', 'course_id')
-        ->latest()
-        ->paginate(15);
+        $pengajarId = auth()->id();
 
-        return view('pengajar.students', compact('students'));
+        // Mengambil data enrollment yang kursusnya milik pengajar ini
+        $recentStudents = \App\Models\Enrollment::whereHas('course', function ($query) use ($pengajarId) {
+            $query->where('user_id', $pengajarId);
+        })->with(['user', 'course'])->latest()->get();
+
+        return view('pengajar.students', compact('recentStudents'));
     }
-
     public function profile()
     {
         $user = Auth::user();
@@ -197,7 +193,7 @@ class DashboardController extends Controller
         ]);
 
         $user = Auth::user();
-        
+
         // Method update() dari Eloquent Model
         $user->update([
             'name' => $request->name,
@@ -206,5 +202,49 @@ class DashboardController extends Controller
         ]);
 
         return back()->with('success', 'Profil berhasil diperbarui.');
+    }
+
+    /**
+     * Menampilkan halaman kelola material untuk kursus tertentu
+     */
+    public function manageMaterials($id)
+    {
+        // Mengambil kursus milik pengajar yang sedang login
+        $course = Course::where('user_id', Auth::id())->findOrFail($id);
+
+        // Mengambil semua material terkait kursus tersebut, diurutkan berdasarkan kolom 'order'
+        $materials = $course->materials()->orderBy('order', 'asc')->get();
+
+        return view('pengajar.materials', compact('course', 'materials'));
+    }
+
+    /**
+     * Menyimpan file material (PDF) baru ke database dan storage
+     */
+    public function storeMaterial(Request $request, $id)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'file' => 'required|mimes:pdf|max:10240', // Validasi file PDF maksimal 10MB
+        ]);
+
+        $course = Course::where('user_id', Auth::id())->findOrFail($id);
+
+        if ($request->hasFile('file')) {
+            // Simpan file ke folder storage/app/public/courses/materials
+            $path = $request->file('file')->store('courses/materials', 'public');
+
+            // Buat data material baru di database
+            $course->materials()->create([
+                'title' => $request->title,
+                'description' => $request->description,
+                'file_path' => $path,
+                'file_type' => 'pdf',
+                'order' => $course->materials()->count() + 1, // Urutan otomatis
+            ]);
+        }
+
+        return back()->with('success', 'Material PDF berhasil ditambahkan!');
     }
 }
