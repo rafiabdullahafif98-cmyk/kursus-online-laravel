@@ -15,7 +15,7 @@
 </div>
 
 <!-- Stats Cards -->
-<div class="row mb-4">
+<div class="row mb-4"></div>
     <div class="col-md-3 col-6 mb-3">
         <div class="card stat-card bg-primary text-white">
             <div class="card-body">
