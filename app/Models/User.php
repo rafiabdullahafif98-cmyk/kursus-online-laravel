@@ -13,7 +13,7 @@ use Laravel\Sanctum\HasApiTokens; // ✅ IMPORT INI
 
 class User extends Authenticatable implements FilamentUser
 {
-    use HasApiTokens, HasFactory, Notifiable; // ✅ HAPUS DUPLIKAT
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
         'name', 
@@ -61,7 +61,7 @@ class User extends Authenticatable implements FilamentUser
     // RELATIONSHIPS
     public function taughtCourses(): HasMany
     {
-        return $this->hasMany(Course::class, 'pengajar_id');
+        return $this->hasMany(Course::class, 'user_id');
     }
 
     public function enrollments(): HasMany
