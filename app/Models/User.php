@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\Model; // Pastikan ini ada
+use Laravel\Sanctum\HasApiTokens; // ✅ IMPORT INI
 
 class User extends Authenticatable implements FilamentUser
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable; // ✅ HAPUS DUPLIKAT
 
     protected $fillable = [
         'name', 
@@ -39,23 +39,34 @@ class User extends Authenticatable implements FilamentUser
     // FILAMENT ACCESS
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->role === 'admin';
+        return $this->role === 'admin' && $panel->getId() === 'admin';
     }
 
-    // ROLE CHECKERS (SIMPLE VERSION)
-    public function isAdmin(): bool { return $this->role === 'admin'; }
-    public function isPengajar(): bool { return $this->role === 'pengajar'; }
-    public function isSiswa(): bool { return $this->role === 'siswa'; }
+    // ROLE CHECKERS
+    public function isAdmin(): bool 
+    { 
+        return $this->role === 'admin'; 
+    }
+    
+    public function isPengajar(): bool 
+    { 
+        return $this->role === 'pengajar'; 
+    }
+    
+    public function isSiswa(): bool 
+    { 
+        return $this->role === 'siswa'; 
+    }
 
-    // RELATIONSHIPS (SIMPLE VERSION)
+    // RELATIONSHIPS
     public function taughtCourses(): HasMany
     {
-        return $this->hasMany(\App\Models\Course::class, 'user_id');
+        return $this->hasMany(Course::class, 'pengajar_id');
     }
 
     public function enrollments(): HasMany
     {
-        return $this->hasMany(\App\Models\Enrollment::class);
+        return $this->hasMany(Enrollment::class);
     }
 
     public function enrolledCourses(): BelongsToMany
@@ -70,9 +81,8 @@ class User extends Authenticatable implements FilamentUser
         ->withTimestamps();
     }
 
-    // FIX: Tambahkan method save jika tidak ada (seharusnya ada dari Model)
-    public function save(array $options = [])
+    public function progressTrackings(): HasMany
     {
-        return parent::save($options);
+        return $this->hasMany(ProgressTracking::class);
     }
 }

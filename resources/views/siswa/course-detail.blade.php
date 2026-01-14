@@ -9,17 +9,17 @@
         <a href="{{ route('siswa.courses') }}" class="btn btn-outline-secondary me-2">
             <i class="bi bi-arrow-left me-1"></i> Kembali
         </a>
-        
+
         @if($enrollment)
-            @if($enrollment->status === 'active')
-            <span class="badge bg-success me-2 py-2 px-3">
-                <i class="bi bi-check-circle me-1"></i> Terdaftar
-            </span>
-            @elseif($enrollment->status === 'completed')
-            <span class="badge bg-warning me-2 py-2 px-3">
-                <i class="bi bi-award me-1"></i> Selesai
-            </span>
-            @endif
+        @if($enrollment->status === 'active')
+        <span class="badge bg-success me-2 py-2 px-3">
+            <i class="bi bi-check-circle me-1"></i> Terdaftar
+        </span>
+        @elseif($enrollment->status === 'completed')
+        <span class="badge bg-warning me-2 py-2 px-3">
+            <i class="bi bi-award me-1"></i> Selesai
+        </span>
+        @endif
         @endif
     </div>
 </div>
@@ -37,12 +37,12 @@
         <!-- Course Overview -->
         <div class="card mb-4">
             @if($course->thumbnail)
-            <img src="{{ asset('storage/' . $course->thumbnail) }}" 
-                 class="card-img-top" 
-                 alt="{{ $course->title }}"
-                 style="max-height: 400px; object-fit: cover;">
+            <img src="{{ asset('storage/' . $course->thumbnail) }}"
+                class="card-img-top"
+                alt="{{ $course->title }}"
+                style="max-height: 400px; object-fit: cover;">
             @endif
-            
+
             <div class="card-body">
                 <div class="mb-3">
                     <span class="badge bg-primary">{{ $course->category->name }}</span>
@@ -55,17 +55,17 @@
                         <i class="bi bi-people"></i> {{ $course->enrollments_count }} Siswa
                     </span>
                 </div>
-                
+
                 <h4 class="card-title">Deskripsi Kursus</h4>
                 <p class="card-text">{!! nl2br(e($course->description)) !!}</p>
-                
+
                 <div class="row mt-4">
                     <div class="col-md-6">
                         <h5><i class="bi bi-person-circle text-primary me-2"></i>Pengajar</h5>
                         <div class="d-flex align-items-center mt-2">
                             <div class="flex-shrink-0">
-                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" 
-                                     style="width: 50px; height: 50px;">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                    style="width: 50px; height: 50px;">
                                     <i class="bi bi-person fs-4"></i>
                                 </div>
                             </div>
@@ -75,7 +75,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-6">
                         <h5><i class="bi bi-info-circle text-primary me-2"></i>Informasi</h5>
                         <ul class="list-unstyled mt-2">
@@ -114,34 +114,34 @@
                             <div class="d-flex align-items-center" style="flex: 1;">
                                 <!-- Checkbox for completion -->
                                 <div class="form-check me-3">
-                                    <input class="form-check-input material-checkbox" 
-                                           type="checkbox" 
-                                           data-course-id="{{ $course->id }}"
-                                           data-material-id="{{ $material->id }}"
-                                           id="material_{{ $material->id }}"
-                                           @if($material->isCompletedByUser(auth()->id() ?? 0))
-                                           checked
-                                           @endif>
+                                    <input class="form-check-input material-checkbox"
+                                        type="checkbox"
+                                        data-course-id="{{ $course->id }}"
+                                        data-material-id="{{ $material->id }}"
+                                        id="material_{{ $material->id }}"
+                                        @if($material->isCompletedByUser(auth()->id() ?? 0))
+                                    checked
+                                    @endif>
                                     <label class="form-check-label" for="material_{{ $material->id }}"></label>
                                 </div>
-                                
+
                                 @switch($material->file_type)
-                                    @case('pdf')
-                                        <i class="bi bi-file-earmark-pdf text-danger fs-4 me-3"></i>
-                                        @break
-                                    @case('video')
-                                        <i class="bi bi-play-circle text-primary fs-4 me-3"></i>
-                                        @break
-                                    @case('ppt')
-                                        <i class="bi bi-file-earmark-slides text-warning fs-4 me-3"></i>
-                                        @break
-                                    @case('doc')
-                                        <i class="bi bi-file-earmark-word text-info fs-4 me-3"></i>
-                                        @break
-                                    @default
-                                        <i class="bi bi-file-earmark text-secondary fs-4 me-3"></i>
+                                @case('pdf')
+                                <i class="bi bi-file-earmark-pdf text-danger fs-4 me-3"></i>
+                                @break
+                                @case('video')
+                                <i class="bi bi-play-circle text-primary fs-4 me-3"></i>
+                                @break
+                                @case('ppt')
+                                <i class="bi bi-file-earmark-slides text-warning fs-4 me-3"></i>
+                                @break
+                                @case('doc')
+                                <i class="bi bi-file-earmark-word text-info fs-4 me-3"></i>
+                                @break
+                                @default
+                                <i class="bi bi-file-earmark text-secondary fs-4 me-3"></i>
                                 @endswitch
-                                
+
                                 <div style="flex: 1;">
                                     <h6 class="mb-1">{{ $material->title }}</h6>
                                     @if($material->description)
@@ -152,14 +152,14 @@
                                     </small>
                                 </div>
                             </div>
-                            
+
                             <div>
                                 @if($material->file_path)
-                                <a href="{{ asset('storage/' . $material->file_path) }}" 
-                                   class="btn btn-sm btn-outline-primary" 
-                                   target="_blank" 
-                                   download
-                                   onclick="markAsDownloaded({{ $course->id }}, {{ $material->id }})">
+                                <a href="{{ asset('storage/' . $material->file_path) }}"
+                                    class="btn btn-sm btn-outline-primary"
+                                    target="_blank"
+                                    download
+                                    onclick="markAsDownloaded({{ $course->id }}, {{ $material->id }})">
                                     <i class="bi bi-download me-1"></i> Unduh
                                 </a>
                                 @endif
@@ -200,7 +200,7 @@
                     </div>
                     @endif
                 </div>
-                
+
                 <ul class="list-unstyled">
                     <li class="mb-2">
                         <i class="bi bi-calendar-check me-2"></i>
@@ -218,22 +218,22 @@
                         <i class="bi bi-book me-2"></i>
                         <strong>Progress:</strong>
                         <div class="progress mt-2" style="height: 10px;">
-                            <div class="progress-bar bg-primary" 
-                                 role="progressbar" 
-                                 style="width: {{ $progress }}%"
-                                 id="progressBar">
+                            <div class="progress-bar bg-primary"
+                                role="progressbar"
+                                style="width: {{ $progress }}%"
+                                id="progressBar">
                             </div>
                         </div>
                         <small class="text-muted" id="progressText">
-                            {{ $progress }}% selesai 
+                            {{ $progress }}% selesai
                             @php
-                                $completedCount = 0;
-                                if ($enrollment) {
-                                    $completedCount = \App\Models\ProgressTracking::where('user_id', auth()->id())
-                                        ->where('course_id', $course->id)
-                                        ->where('is_completed', true)
-                                        ->count();
-                                }
+                            $completedCount = 0;
+                            if ($enrollment) {
+                            $completedCount = \App\Models\ProgressTracking::where('user_id', auth()->id())
+                            ->where('course_id', $course->id)
+                            ->where('is_completed', true)
+                            ->count();
+                            }
                             @endphp
                             ({{ $completedCount }} dari {{ $materials->count() }} materi)
                         </small>
@@ -292,8 +292,8 @@
             <div class="card-body">
                 <div class="list-group">
                     @foreach($otherCourses as $otherCourse)
-                    <a href="{{ route('siswa.course.show', $otherCourse->slug) }}" 
-                       class="list-group-item list-group-item-action">
+                    <a href="{{ route('siswa.course.show', $otherCourse->slug) }}"
+                        class="list-group-item list-group-item-action">
                         <div class="d-flex w-100 justify-content-between">
                             <h6 class="mb-1">{{ $otherCourse->title }}</h6>
                             @if($otherCourse->price > 0)
@@ -303,7 +303,7 @@
                             @endif
                         </div>
                         <small class="text-muted">
-                            {{ $otherCourse->enrollments_count }} siswa • 
+                            {{ $otherCourse->enrollments_count }} siswa •
                             {{ \Carbon\Carbon::parse($otherCourse->created_at)->format('M Y') }}
                         </small>
                     </a>
@@ -317,70 +317,70 @@
 
 @push('scripts')
 <script>
-// Update progress when checkbox is clicked
-document.addEventListener('DOMContentLoaded', function() {
-    const checkboxes = document.querySelectorAll('.material-checkbox');
-    
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const courseId = this.getAttribute('data-course-id');
-            const materialId = this.getAttribute('data-material-id');
-            const isChecked = this.checked;
-            
-            const endpoint = isChecked 
-                ? '/siswa/progress/complete' 
-                : '/siswa/progress/incomplete';
-            
-            fetch(endpoint, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    course_id: courseId,
-                    material_id: materialId
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update progress bar
-                    const progressBar = document.getElementById('progressBar');
-                    const progressText = document.getElementById('progressText');
-                    
-                    if (progressBar && progressText) {
-                        progressBar.style.width = data.progress + '%';
-                        progressText.textContent = data.progress + '% selesai (' + data.completed + ' dari ' + data.total + ' materi)';
-                    }
-                    
-                    // Show success message
-                    showToast('success', data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showToast('error', 'Terjadi kesalahan');
-                this.checked = !isChecked; // Revert checkbox
+    // Update progress when checkbox is clicked
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.material-checkbox');
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const courseId = this.getAttribute('data-course-id');
+                const materialId = this.getAttribute('data-material-id');
+                const isChecked = this.checked;
+
+                const endpoint = isChecked ?
+                    '/siswa/progress/complete' :
+                    '/siswa/progress/incomplete';
+
+                fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            course_id: courseId,
+                            material_id: materialId
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update progress bar
+                            const progressBar = document.getElementById('progressBar');
+                            const progressText = document.getElementById('progressText');
+
+                            if (progressBar && progressText) {
+                                progressBar.style.width = data.progress + '%';
+                                progressText.textContent = data.progress + '% selesai (' + data.completed + ' dari ' + data.total + ' materi)';
+                            }
+
+                            // Show success message
+                            showToast('success', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showToast('error', 'Terjadi kesalahan');
+                        this.checked = !isChecked; // Revert checkbox
+                    });
             });
         });
-    });
-    
-    // Function to mark as downloaded
-    window.markAsDownloaded = function(courseId, materialId) {
-        // Auto-check the material when downloaded
-        const checkbox = document.getElementById('material_' + materialId);
-        if (checkbox && !checkbox.checked) {
-            checkbox.checked = true;
-            checkbox.dispatchEvent(new Event('change'));
-        }
-    };
-    
-    // Toast notification function
-    function showToast(type, message) {
-        // Create toast element
-        const toastId = 'toast-' + Date.now();
-        const toastHtml = `
+
+        // Function to mark as downloaded
+        window.markAsDownloaded = function(courseId, materialId) {
+            // Auto-check the material when downloaded
+            const checkbox = document.getElementById('material_' + materialId);
+            if (checkbox && !checkbox.checked) {
+                checkbox.checked = true;
+                checkbox.dispatchEvent(new Event('change'));
+            }
+        };
+
+        // Toast notification function
+        function showToast(type, message) {
+            // Create toast element
+            const toastId = 'toast-' + Date.now();
+            const toastHtml = `
             <div id="${toastId}" class="position-fixed top-0 end-0 p-3" style="z-index: 11">
                 <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0" role="alert">
                     <div class="d-flex">
@@ -392,21 +392,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
         `;
-        
-        // Add toast to body
-        document.body.insertAdjacentHTML('beforeend', toastHtml);
-        
-        // Show and auto-remove toast
-        const toastEl = document.getElementById(toastId);
-        const toast = new bootstrap.Toast(toastEl.querySelector('.toast'));
-        toast.show();
-        
-        // Remove toast after 3 seconds
-        setTimeout(() => {
-            toastEl.remove();
-        }, 3000);
-    }
-});
+
+            // Add toast to body
+            document.body.insertAdjacentHTML('beforeend', toastHtml);
+
+            // Show and auto-remove toast
+            const toastEl = document.getElementById(toastId);
+            const toast = new bootstrap.Toast(toastEl.querySelector('.toast'));
+            toast.show();
+
+            // Remove toast after 3 seconds
+            setTimeout(() => {
+                toastEl.remove();
+            }, 3000);
+        }
+    });
 </script>
 @endpush
 
@@ -417,19 +417,19 @@ document.addEventListener('DOMContentLoaded', function() {
         border-right: none;
         border-radius: 0;
     }
-    
+
     .list-group-item:first-child {
         border-top: none;
     }
-    
+
     .list-group-item:last-child {
         border-bottom: none;
     }
-    
+
     .progress {
         background-color: #e9ecef;
     }
-    
+
     .material-checkbox {
         width: 20px;
         height: 20px;
